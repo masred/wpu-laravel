@@ -51,7 +51,7 @@ class StudentsController extends Controller
         //     'email' => $request->email,
         //     'jurusan' => $request->jurusan
         // ]);
-        $validated = $request->validate([
+        $request->validate([
             'nama' => 'required|min:3',
             'nrp' => 'required|unique:students|size:9',
             'email' => 'required|unique:students',
@@ -81,7 +81,7 @@ class StudentsController extends Controller
      */
     public function edit(ModelsStudent $student)
     {
-        //
+        return view('students.edit', compact('student'));
     }
 
     /**
@@ -93,7 +93,21 @@ class StudentsController extends Controller
      */
     public function update(Request $request, ModelsStudent $student)
     {
-        //
+        $request->validate([
+            'nama' => 'required|min:3',
+            'nrp' => 'required|size:9',
+            'email' => 'required',
+            'jurusan' => 'required',
+        ]);
+
+        ModelsStudent::where('id', $student->id)
+            ->update([
+                'nama' => $request->nama,
+                'nrp' => $request->nrp,
+                'email' => $request->email,
+                'jurusan' => $request->jurusan
+            ]);
+        return redirect('/students')->with('status', 'data edited successfully');
     }
 
     /**
@@ -104,6 +118,7 @@ class StudentsController extends Controller
      */
     public function destroy(ModelsStudent $student)
     {
-        //
+        ModelsStudent::destroy($student->id);
+        return redirect('/students')->with('status', 'data deleted successfully');
     }
 }
